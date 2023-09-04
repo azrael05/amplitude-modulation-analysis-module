@@ -1306,48 +1306,48 @@ def plot_spectrogram_data(spectrogram_data, ix=None, t_range=None, f_range=None,
     
     """    
     
-    def plot_one_spectrogram(ax, X_pwr, t_ax, f_ax, title_str, t_range, f_range, c_range, c_map):
-        """
-        Plots ONLY ONE Spectrogram
-        """
-        T, F = np.meshgrid(t_ax, f_ax) 
-        X_plot = 10 * np.log10(X_pwr[:,:].transpose() + np.finfo(float).eps) 
-        pmesh = plt.pcolormesh(T,F,X_plot, cmap=c_map)
+    # def plot_one_spectrogram(ax, X_pwr, t_ax, f_ax, title_str, t_range, f_range, c_range, c_map):
+    #     """
+    #     Plots ONLY ONE Spectrogram
+    #     """
+    #     T, F = np.meshgrid(t_ax, f_ax) 
+    #     X_plot = 10 * np.log10(X_pwr[:,:].transpose() + np.finfo(float).eps) 
+    #     pmesh = plt.pcolormesh(T,F,X_plot, cmap=c_map)
     
-        # Major and Minor ticks
-        ax = plt.gca()
-        ax.xaxis.set_major_locator(ticker.AutoLocator())
-        ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-        ax.yaxis.set_major_locator(ticker.AutoLocator())
-        ax.yaxis.set_minor_locator(ticker.AutoMinorLocator())
+    #     # Major and Minor ticks
+    #     ax = plt.gca()
+    #     ax.xaxis.set_major_locator(ticker.AutoLocator())
+    #     ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
+    #     ax.yaxis.set_major_locator(ticker.AutoLocator())
+    #     ax.yaxis.set_minor_locator(ticker.AutoMinorLocator())
              
-        plt.xlabel('fime (s)')
-        plt.ylabel('frequency (Hz)')
+    #     plt.xlabel('fime (s)')
+    #     plt.ylabel('frequency (Hz)')
     
     
-        if t_range is not None:
-            xlim = t_range
-        else:
-            xlim = t_ax
+    #     if t_range is not None:
+    #         xlim = t_range
+    #     else:
+    #         xlim = t_ax
     
-        if f_range is not None:
-            ylim = f_range
-        else:
-            ylim = f_ax
+    #     if f_range is not None:
+    #         ylim = f_range
+    #     else:
+    #         ylim = f_ax
     
-        # set the limits of the plot to the limits of the data
-        plt.axis([xlim.min(), xlim.max(), ylim.min(), ylim.max()])
+    #     # set the limits of the plot to the limits of the data
+    #     plt.axis([xlim.min(), xlim.max(), ylim.min(), ylim.max()])
           
-        if c_range is not None:
-            clim = c_range
-        else:
-            clim = np.array([np.mean(X_plot), np.amax(X_plot)])  
+    #     if c_range is not None:
+    #         clim = c_range
+    #     else:
+    #         clim = np.array([np.mean(X_plot), np.amax(X_plot)])  
     
-        pmesh.set_clim(vmin=clim[0], vmax=clim[1])
+    #     pmesh.set_clim(vmin=clim[0], vmax=clim[1])
     
-        plt.colorbar()
-        plt.title(title_str)
-        plt.draw()
+    #     plt.colorbar()
+    #     plt.title(title_str)
+    #     plt.draw()
 
     
     # validate 'ix' argument    
@@ -1357,26 +1357,28 @@ def plot_spectrogram_data(spectrogram_data, ix=None, t_range=None, f_range=None,
         ix = np.array([ix])
         
     # Check if ix has ONLY one element
-    if len(ix) == 1:
-        new_figure = False
-        # Retrieve Current Axes handle from the Current Figure, if there is not
-        # Current Figure, it's generated here       
-        ax = plt.gca()
-    else:
-        new_figure = True
+    # if len(ix) == 1:
+    #     # new_figure = False
+    #     # # Retrieve Current Axes handle from the Current Figure, if there is not
+    #     # # Current Figure, it's generated here       
+    #     # ax = plt.gca()
+    # else:
+        # new_figure = True
 
     for i_channel in ix:      
-        if new_figure:
-            plt.figure()
-            ax = plt.gca()
-        plot_one_spectrogram(ax, 
-                             spectrogram_data['power_spectrogram'][:, :, i_channel], 
-                             spectrogram_data['time_axis'], 
-                             spectrogram_data['freq_axis'], 
-                             spectrogram_data['channel_names'][i_channel],
-                             t_range, f_range, c_range, c_map)    
+        # if new_figure:
+        #     plt.figure()
+        #     ax = plt.gca()
+        X_pwr = spectrogram_data['power_spectrogram'][:, :, i_channel]
+        X_plot = 10 * np.log10(X_pwr[:,:].transpose() + np.finfo(float).eps)
+        # plot_one_spectrogram(ax, 
+        #                      spectrogram_data['power_spectrogram'][:, :, i_channel], 
+        #                      spectrogram_data['time_axis'], 
+        #                      spectrogram_data['freq_axis'], 
+        #                      spectrogram_data['channel_names'][i_channel],
+        #                      t_range, f_range, c_range, c_map)    
     
-
+    return X_plot
 
 def plot_modulation_spectrogram_data(modulation_spectrogram_data, ix=None, f_range=None, modf_range=None, c_range=None, c_map='viridis'):
     """ Plot the Power Modulation Spectrogram related to the `modulation_spectrogram_data`
@@ -1403,48 +1405,48 @@ def plot_modulation_spectrogram_data(modulation_spectrogram_data, ix=None, f_ran
     
     """     
     
-    def plot_one_modulation_spectrogram(ax, X_pwr, f_ax, modf_ax, title_str, f_range, modf_range, c_range, c_map):
-        """
-        Plots ONLY ONE Modulation Spectrogram
-        """
-        MF, F = np.meshgrid(modf_ax, f_ax) 
-        X_plot = 10 * np.log10(X_pwr[:,:] + np.finfo(float).eps) 
-        pmesh = plt.pcolormesh(MF, F, X_plot, cmap =c_map)
+    # def plot_one_modulation_spectrogram(ax, X_pwr, f_ax, modf_ax, title_str, f_range, modf_range, c_range, c_map):
+        # """
+        # Plots ONLY ONE Modulation Spectrogram
+        # """
+        # MF, F = np.meshgrid(modf_ax, f_ax) 
+        # X_plot = 10 * np.log10(X_pwr[:,:] + np.finfo(float).eps) 
+        # pmesh = plt.pcolormesh(MF, F, X_plot, cmap =c_map)
     
         # Major and Minor ticks
-        ax = plt.gca()
-        ax.xaxis.set_major_locator(ticker.AutoLocator())
-        ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
-        ax.yaxis.set_major_locator(ticker.AutoLocator())
-        ax.yaxis.set_minor_locator(ticker.AutoMinorLocator())
+        # ax = plt.gca()
+        # ax.xaxis.set_major_locator(ticker.AutoLocator())
+        # ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
+        # ax.yaxis.set_major_locator(ticker.AutoLocator())
+        # ax.yaxis.set_minor_locator(ticker.AutoMinorLocator())
              
-        plt.xlabel('modulation frequency (Hz)')
-        plt.ylabel('conventional frequency (Hz)')
+        # plt.xlabel('modulation frequency (Hz)')
+        # plt.ylabel('conventional frequency (Hz)')
     
     
-        if modf_range is not None:
-            xlim = modf_range
-        else:
-            xlim = modf_ax
+        # if modf_range is not None:
+        #     xlim = modf_range
+        # else:
+        #     xlim = modf_ax
     
-        if f_range is not None:
-            ylim = f_range
-        else:
-            ylim = f_ax
+        # if f_range is not None:
+        #     ylim = f_range
+        # else:
+        #     ylim = f_ax
     
         # set the limits of the plot to the limits of the data
-        plt.axis([xlim.min(), xlim.max(), ylim.min(), ylim.max()])
+        # plt.axis([xlim.min(), xlim.max(), ylim.min(), ylim.max()])
           
-        if c_range is not None:
-            clim = c_range
-        else:
-            clim = np.array([np.mean(X_plot), np.amax(X_plot)])  
+        # if c_range is not None:
+        #     clim = c_range
+        # else:
+        #     clim = np.array([np.mean(X_plot), np.amax(X_plot)])  
     
-        pmesh.set_clim(vmin=clim[0], vmax=clim[1])
+        # pmesh.set_clim(vmin=clim[0], vmax=clim[1])
     
-        plt.colorbar()
-        plt.title(title_str)
-        plt.draw()
+        # plt.colorbar()
+        # plt.title(title_str)
+        # plt.draw()
       
     # validate 'ix' argument    
     if ix is None:
@@ -1453,24 +1455,27 @@ def plot_modulation_spectrogram_data(modulation_spectrogram_data, ix=None, f_ran
         ix = np.array([ix])
     
     # Check if ix has ONLY one element
-    if len(ix) == 1:
-        new_figure = False
-        # Retrieve Current Axes handle from the Current Figure, if there is not
-        # Current Figure, it's generated here       
-        ax = plt.gca()
-    else:
-        new_figure = True
+    # if len(ix) == 1:
+    #     new_figure = False
+    #     # Retrieve Current Axes handle from the Current Figure, if there is not
+    #     # Current Figure, it's generated here       
+    #     ax = plt.gca()
+    # else:
+    #     new_figure = True
 
     for i_channel in ix:      
-        if new_figure:
-            plt.figure()
-            ax = plt.gca()
-        plot_one_modulation_spectrogram(ax, 
-                             modulation_spectrogram_data['power_modulation_spectrogram'][:, :, i_channel], 
-                             modulation_spectrogram_data['freq_axis'], 
-                             modulation_spectrogram_data['freq_mod_axis'], 
-                             modulation_spectrogram_data['channel_names'][i_channel],
-                             f_range, modf_range, c_range, c_map)    
+        # if new_figure:
+        #     plt.figure()
+        #     ax = plt.gca()
+        X_pwr = modulation_spectrogram_data['power_modulation_spectrogram'][:, :, i_channel]
+        X_plot = 10 * np.log10(X_pwr[:,:] + np.finfo(float).eps)
+        # plot_one_modulation_spectrogram(ax, 
+        #                      modulation_spectrogram_data['power_modulation_spectrogram'][:, :, i_channel], 
+        #                      modulation_spectrogram_data['freq_axis'], 
+        #                      modulation_spectrogram_data['freq_mod_axis'], 
+        #                      modulation_spectrogram_data['channel_names'][i_channel],
+        #                      f_range, modf_range, c_range, c_map)   
+    return X_plot 
 
 
 def plot_psd_data(psd_data, ix=None, p_range=None, f_range=None):
